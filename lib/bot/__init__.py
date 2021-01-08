@@ -1,4 +1,6 @@
+from asyncio import sleep
 from datetime import datetime
+from glob import glob
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -10,12 +12,27 @@ from ..db import db
 
 PREFIX = "+"
 OWNER_IDS = [134118092082118657]
+COGS = [path.split("\\")[-1][:-3] for path in glob("./lib/cogs/*.py")]
+
+
+class Ready(object):
+    def __init__(self):
+        for cog in COGS:
+            setattr(self, cog, False)
+
+    def ready_up(self, cog):
+        setattr(self, cog, True)
+        print(f" {cog} cog ready")
+
+    def all_ready(self):
+        return all([getattr(self, cog) for cog in COGS])
 
 
 class Bot(BotBase):
     def __init__(self):
         self.PREFIX = PREFIX
         self.ready = False
+        self.cogs_ready = Ready()
         self.guild = None
         self.scheduler = AsyncIOScheduler()
 
@@ -27,8 +44,18 @@ class Bot(BotBase):
             intents=Intents.all(),
         )
 
+    def setup(self):
+        for cog in COGS:
+            self.load_extension(f"lib.cogs.{cog}")
+            print(f"{cog} cog loaded")
+
+        print("setup complete")
+
     def run(self, version):
         self.VERSION = version
+
+        print("running setup...")
+        self.setup()
 
         with open("./lib/bot/token.0", "r", encoding="utf-8") as tf:
             self.TOKEN = tf.read()
@@ -42,7 +69,7 @@ class Bot(BotBase):
 
     async def rules_reminder(self):
         channel = self.get_channel(696812072918581348)
-        await channel.send("Remember to adhere to the rules!")
+        await self.stdout.send("Remember to adhere to the rules!")
 
     async def on_connect(self):
         print("bot connected")
@@ -54,8 +81,7 @@ class Bot(BotBase):
         if err == "on_command_error":
             await args[0].send("Something went wrong.")
 
-        channel = self.get_channel(696812072918581348)
-        await channel.send("An error occured.")
+        await self.stdout.send("An error occured.")
         raise
 
     async def on_command_error(self, ctx, exc):
@@ -67,29 +93,30 @@ class Bot(BotBase):
 
     async def on_ready(self):
         if not self.ready:
-            self.ready = True
             self.guild = self.get_guild(663234840530780170)
+            self.stdout = self.get_channel(796934983049543691)
             self.scheduler.add_job(self.rules_reminder, CronTrigger(
                 day_of_week=0, hour=12, minute=0, second=0))
             self.scheduler.start()
 
-            channel = self.get_channel(796934983049543691)
-            await channel.send("Now online!")
+         # embed = Embed(title="Now online!", description="Citadel is now online.",
+         # 			  colour=0xFF0000, timestamp=datetime.utcnow())
+         # fields = [("Name", "Value", True),
+         # 		  ("Another field", "This field is next to the other one.", True),
+         # 		  ("A non-inline field", "This field will appear on it's own row.", False)]
+         # for name, value, inline in fields:
+         # 	embed.add_field(name=name, value=value, inline=inline)
+         # embed.set_author(name="Citadel", icon_url=self.guild.icon_url)
+         # embed.set_footer(text="This is a footer!")
+         # await channel.send(embed=embed)
 
-            # embed = Embed(title="Now online!", description="Citadel is now online.",
-            # 			  colour=0xFF0000, timestamp=datetime.utcnow())
-            # fields = [("Name", "Value", True),
-            # 		  ("Another field", "This field is next to the other one.", True),
-            # 		  ("A non-inline field", "This field will appear on it's own row.", False)]
-            # for name, value, inline in fields:
-            # 	embed.add_field(name=name, value=value, inline=inline)
-            # embed.set_author(name="Citadel", icon_url=self.guild.icon_url)
-            # embed.set_footer(text="This is a footer!")
-            # await channel.send(embed=embed)
+         # await channel.send(file=File("./data/images/Mtvoq7M.jpg"))
+            while not self.cogs_ready.all_ready():
+                await sleep(0.5)
 
-            # await channel.send(file=File("./data/images/Mtvoq7M.jpg"))
-
-            print("bot ready")
+            await self.stdout.send("Now online!")
+            self.ready = True
+            print(" bot ready")
 
         else:
             print("bot reconnected")

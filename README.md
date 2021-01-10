@@ -7,6 +7,11 @@ Python 3.8.6 (Confirmed Working)
 [Warning] Python 3.9.x + Unsupported due to AsyncIOScheduler? Looking For Fix.    
 Discord.py  
 Sqlite3  
-AsyncIOScheduler  
+AsyncIOScheduler
+# Dev Environment (Open To Recommendations) 
+Visual Studio with MagicPython (extension), Chromodynamics (Theme), Python (Extension) & Pylint. 
+## Self Hosting & Derivatives Agreement
+- You may not use the Praetorian logo or name. 
+- You may not host/advertise a public/modified version of Praetorian for use beyond your own server(s).
 ## Other Project Infomation  
 Special Thanks to Carberra Tutorials for provding great tutorial(s) that went into this bot <3

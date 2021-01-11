@@ -3,15 +3,12 @@ Currently this bot is not open for public use, it is missing various features an
 ## Can I Run It anyway?
 You may run this bot at your own risk by running launcher.py after supplying the required token/config fields (assuming the below depends are met).
 ## Dependencies
-Python 3.8.6 (Confirmed Working)  
-[Warning] Python 3.9.x + Unsupported due to AsyncIOScheduler? Looking For Fix.    
-Discord.py  
-Sqlite3  
-AsyncIOScheduler
-# Dev Environment (Open To Recommendations) 
-Visual Studio with MagicPython (extension), Chromodynamics (Theme), Python (Extension) & Pylint. 
+Python 3.9.1 (Confirmed)
+Discord.py 1.6.0
+Sqlite3 3.34.0
+AsyncIOScheduler 3.6.3
 ## Self Hosting & Derivatives Agreement
-- You may not use the Praetorian logo or name. 
+- You may not use the Praetorian logo or name.
 - You may not host/advertise a public/modified version of Praetorian for use beyond your own server(s).
-## Other Project Infomation  
-Special Thanks to Carberra Tutorials for provding great tutorial(s) that went into this bot <3
+## Other Project Infomation
+Check out Carberra, Corey Schafer and Sentdex for learning python if you are new <3

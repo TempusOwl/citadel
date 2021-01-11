@@ -33,8 +33,23 @@ If mass mention x in period a = 3.5
 Actions = delete, warn
 mention_infraction = 3.5
 
+If mass mention x in period a = 3.5
+Actions = delete, warn
+mention_infraction = 3.5
+
+If Image Sent Inside...
+channels = none
+actions = delete, warn
+mention_infraction = 1.5
+
 Possible Actions You Can Assign
-mute, kick, warn, ban1d, ban3d, ban7d, ban14d,
+delete, mute, kick, warn, ban1d, ban3d, ban7d, ban14d,
+
+Join Protection
+Username Invite URL
+Account Age
+Account Age Disable 15minutes
+
 
 Assigns actions using
 

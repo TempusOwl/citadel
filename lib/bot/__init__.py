@@ -63,12 +63,7 @@ class Bot(BotBase):
         print("running bot...")
         super().run(self.TOKEN, reconnect=True)
 
-    async def print_message(self):
-        channel = self.get_channel(696812072918581348)
-        await channel.send("I am a timer")
-
     async def rules_reminder(self):
-        channel = self.get_channel(696812072918581348)
         await self.stdout.send("Remember to adhere to the rules!")
 
     async def on_connect(self):
@@ -82,7 +77,7 @@ class Bot(BotBase):
             await args[0].send("Something went wrong.")
 
         await self.stdout.send("An error occured.")
-        raise
+        raise  # type: ignore
 
     async def on_command_error(self, ctx, exc):
         if isinstance(exc, CommandNotFound):
@@ -95,22 +90,23 @@ class Bot(BotBase):
         if not self.ready:
             self.guild = self.get_guild(663234840530780170)
             self.stdout = self.get_channel(796934983049543691)
-            self.scheduler.add_job(self.rules_reminder, CronTrigger(
-                day_of_week=0, hour=12, minute=0, second=0))
+            self.scheduler.add_job(
+                self.rules_reminder,
+                CronTrigger(day_of_week=0, hour=12, minute=0, second=0))
             self.scheduler.start()
 
-         # embed = Embed(title="Now online!", description="Citadel is now online.",
-         # 			  colour=0xFF0000, timestamp=datetime.utcnow())
-         # fields = [("Name", "Value", True),
-         # 		  ("Another field", "This field is next to the other one.", True),
-         # 		  ("A non-inline field", "This field will appear on it's own row.", False)]
-         # for name, value, inline in fields:
-         # 	embed.add_field(name=name, value=value, inline=inline)
-         # embed.set_author(name="Citadel", icon_url=self.guild.icon_url)
-         # embed.set_footer(text="This is a footer!")
-         # await channel.send(embed=embed)
+            # embed = Embed(title="Now online!", description="Citadel is now online.",
+            # 			  colour=0xFF0000, timestamp=datetime.utcnow())
+            # fields = [("Name", "Value", True),
+            # 		  ("Another field", "This field is next to the other one.", True),
+            # 		  ("A non-inline field", "This field will appear on it's own row.", False)]
+            # for name, value, inline in fields:
+            # 	embed.add_field(name=name, value=value, inline=inline)
+            # embed.set_author(name="Citadel", icon_url=self.guild.icon_url)
+            # embed.set_footer(text="This is a footer!")
+            # await channel.send(embed=embed)
 
-         # await channel.send(file=File("./data/images/Mtvoq7M.jpg"))
+            # await channel.send(file=File("./data/images/Mtvoq7M.jpg"))
             while not self.cogs_ready.all_ready():
                 await sleep(0.5)
 

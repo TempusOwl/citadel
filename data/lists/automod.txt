@@ -1,0 +1,46 @@
+Automod Chicken Scratch
+
+Infraction Count Above 10 = Automatic Mute
+Mute Period = 30 minutes
+Infraction Reset = 15 minutes
+
+
+If discordlinks.py
+Default Banned Words
+Actions = delete, warn
+inviteurl_infraction = 9
+
+If default_blacklist contentinfraction
+Actions = delete, warn
+blackist_infraction = 3.5
+
+If sending messages too fast = 3
+Actions = delete, warn
+spam_msg_infraction = 3
+
+If sending similar messages too fast.
+Count = +3
+period = 30 seconds
+Actions = delete, warn
+similar_msg_infraction = 1
+
+
+If mention x in period a = 3.5
+Actions= delete, warn
+mention_infraction = 3.5
+
+If mass mention x in period a = 3.5
+Actions = delete, warn
+mention_infraction = 3.5
+
+Possible Actions You Can Assign
+mute, kick, warn, ban1d, ban3d, ban7d, ban14d,
+
+Assigns actions using
+
+!p automod inviteurl add mute
+!p automod blacklist remove mute
+!p automod mentions change mute <new var>
+!p automod mass_mentions setinfractions <new var>
+!p automod similar_messages disable
+!p automod spam_messages enable

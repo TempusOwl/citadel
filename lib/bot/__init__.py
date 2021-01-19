@@ -1,3 +1,4 @@
+import discord
 from asyncio import sleep
 from datetime import datetime
 from glob import glob
@@ -6,6 +7,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from discord import Embed, File, Intents
 from discord.ext.commands import Bot as BotBase
+from discord.ext.commands import Context
 from discord.ext.commands import CommandNotFound
 
 from ..db import db
@@ -72,11 +74,21 @@ class Bot(BotBase):
     async def on_disconnect(self):
         print("bot disconnected")
 
+    async def process_commands(self, message):
+        ctx = await self.get_context(message, cls=Context)
+
+        if ctx.command is not None and ctx.guild is not None:
+            if self.ready:
+                await self.invoke(ctx)
+
+            else:
+                await ctx.send("Try again in a few seconds.")
+
     async def on_error(self, err, *args, **kwargs):
         if err == "on_command_error":
             await args[0].send("Something went wrong.")
 
-        await self.stdout.send("An error occured.")
+        print("An error occured.")  # Catches any error.
         raise  # type: ignore
 
     async def on_command_error(self, ctx, exc):
@@ -84,7 +96,7 @@ class Bot(BotBase):
             pass
 
         else:
-            raise exc.original
+            raise exc
 
     async def on_ready(self):
         if not self.ready:
@@ -95,18 +107,6 @@ class Bot(BotBase):
                 CronTrigger(day_of_week=0, hour=12, minute=0, second=0))
             self.scheduler.start()
 
-            # embed = Embed(title="Now online!", description="Citadel is now online.",
-            # 			  colour=0xFF0000, timestamp=datetime.utcnow())
-            # fields = [("Name", "Value", True),
-            # 		  ("Another field", "This field is next to the other one.", True),
-            # 		  ("A non-inline field", "This field will appear on it's own row.", False)]
-            # for name, value, inline in fields:
-            # 	embed.add_field(name=name, value=value, inline=inline)
-            # embed.set_author(name="Citadel", icon_url=self.guild.icon_url)
-            # embed.set_footer(text="This is a footer!")
-            # await channel.send(embed=embed)
-
-            # await channel.send(file=File("./data/images/Mtvoq7M.jpg"))
             while not self.cogs_ready.all_ready():
                 await sleep(0.5)
 
@@ -117,8 +117,9 @@ class Bot(BotBase):
         else:
             print("bot reconnected")
 
-    async def on_message(self, message):
-        pass
+        async def on_message(self, message):
+            if not message.author.bot:
+                await self.process_command(message)
 
 
 bot = Bot()

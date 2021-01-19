@@ -6,15 +6,18 @@ from glob import glob
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from discord import Embed, File, Intents
+from discord.errors import HTTPException, Forbidden
 from discord.ext.commands import Bot as BotBase
 from discord.ext.commands import Context
-from discord.ext.commands import CommandNotFound
+from discord.ext.commands import (
+    CommandNotFound, BadArgument, MissingRequiredArgument)
 
 from ..db import db
 
 PREFIX = "+"
 OWNER_IDS = [134118092082118657]
 COGS = [path.split("\\")[-1][:-3] for path in glob("./lib/cogs/*.py")]
+IGNORE_EXCEPTIONS = (CommandNotFound, BadArgument)
 
 
 class Ready(object):
@@ -92,11 +95,19 @@ class Bot(BotBase):
         raise  # type: ignore
 
     async def on_command_error(self, ctx, exc):
-        if isinstance(exc, CommandNotFound):
+        if any([isinstance(exc, error) for error in IGNORE_EXCEPTIONS]):  # Hides any error
             pass
+        elif isinstance(exc, MissingRequiredArgument):
+            await ctx.send("One or more required arguments are missing.")
+
+        elif isinstance(exc.original, HTTPException):
+            await ctx.send("Unable to send message")
+
+        elif isinstance(exc.original, Forbidden):
+            await ctx.send("I do not have permission to do that.")
 
         else:
-            raise exc
+            raise exc.original  # Potential Multi Server Problem
 
     async def on_ready(self):
         if not self.ready:

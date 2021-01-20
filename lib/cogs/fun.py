@@ -16,7 +16,7 @@ class Fun(Cog):
     async def say_hello(self, ctx):
         await ctx.send(f"{choice(('hello','hi', 'heya'))} {ctx.author.mention}!")
 
-    @command(name="dice", aliases=["roll"])
+    @command(name="dice", brief="Dice 2d20 (2 die 20 faces)", aliases=["roll"])
     @cooldown(1, 8, BucketType.user)
     async def roll_dice(self, ctx, die_string: str):
         dice, value = (int(term) for term in die_string.split("d"))
@@ -27,7 +27,7 @@ class Fun(Cog):
         else:
             await ctx.send("Number is too large, try lower number.")
 
-    @command(name="slap", aliases=["hit"])
+    @command(name="slap", brief="Slap (Mention/ID)", aliases=["hit"])
     async def slap_member(self, ctx, member: Member, *, reason: Optional[str] = "for no reason!"):
         await ctx.send(f"{ctx.author.display_name} slapped {member.mention} for {reason}!")
 
@@ -36,13 +36,13 @@ class Fun(Cog):
         if isinstance(exc, BadArgument):
             await ctx.send("I can't find that member.")
 
-    @command(name="echo", aliases=["say"])
+    @command(name="echo", brief="Say (Message)", aliases=["say"])
     @cooldown(1, 8, BucketType.guild)
     async def echo_message(self, ctx, *, message):
         await ctx.message.delete()
         await ctx.send(message)
 
-    @command(name="fact")
+    @command(name="fact", brief="Fact (Dog/Cat/Panda/Fox/Bird/Koala)")
     @cooldown(1, 8, BucketType.guild)
     async def animal_fact(self, ctx, animal: str):
         if (animal := animal.lower()) in ("dog", "cat", "panda", "fox", "bird", "koala"):

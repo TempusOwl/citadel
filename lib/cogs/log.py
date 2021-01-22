@@ -31,39 +31,21 @@ class Log(Cog):
 
             await self.log_channel.send(embed=embed)
 
-        if before.discriminator != after.discriminator:
-            embed = Embed(title=":page_facing_up: Discriminator Change",
-                          colour=9807270,
-                          timestamp=datetime.utcnow())
-
-            fields = [("Before", before.discriminator, False),
-                      ("After", after.discriminator, False)]
-
-            for name, value, inline in fields:
-                embed.add_field(name=name, value=value, inline=inline)
-
-            await self.log_channel.send(embed=embed)
-
-        if before.avatar_url != after.avatar_url:
-            embed = Embed(title=":page_facing_up: Avatar Change",
-                          description="New image is below, old to the right.",
-                          colour=9807270,
-                          timestamp=datetime.utcnow())
-
-            embed.set_thumbnail(url=before.avatar_url)
-            embed.set_image(url=after.avatar_url)
-
-            await self.log_channel.send(embed=embed)
-
     @Cog.listener()
     async def on_member_update(self, before, after):
         if before.display_name != after.display_name:
-            embed = Embed(title=":page_facing_up: Nickname Change",
-                          colour=9807270,
+            embed = Embed(description=f":page_facing_up: {after.mention} **ID ( {after.id} )**",
+                          colour=612934,
                           timestamp=datetime.utcnow())
 
-            fields = [("Before", before.display_name, False),
-                      ("After", after.display_name, False)]
+            embed.set_author(
+                name=f"Nickname Updated", icon_url=f"{after.avatar_url}")
+
+            namemessage = before.display_name + " :arrow_right:  " + after.name
+
+            fields = [
+                ("New Name ", namemessage, False)]
+            # , ("Joined", after.JoinedAt, False)]
 
             for name, value, inline in fields:
                 embed.add_field(name=name, value=value, inline=inline)

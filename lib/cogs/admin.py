@@ -1,3 +1,12 @@
+from discord import Embed
+
+import datetime as dt
+import typing as t
+from os import name
+from platform import python_version
+from time import time
+
+from discord.ext import commands
 from discord.ext.commands import Cog
 from discord.ext.commands import CheckFailure
 from discord.ext.commands import command, has_permissions
@@ -29,6 +38,17 @@ class admin(Cog):
     async def on_ready(self):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("admin")
+
+    @commands.command(name="guildicon", help="Displays the icon of your server.")
+    async def icon_command(self, ctx):
+        embed = Embed(description=f"**Displaying icon for {ctx.guild.name}.**",
+                      ctx=ctx,
+                      header="Information",
+                      url_image=f"{ctx.guild.icon_url}",
+                      )
+
+        embed.set_thumbnail(url=ctx.guild.icon_url)
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

@@ -89,7 +89,7 @@ class Log(Cog):
 
     @Cog.listener()
     async def on_message_edit(self, before, after):
-        if before.content != after.content:
+        if before.content != after.content and not before.author.bot:
             acontent_clamp = after.content
             bcontent_clamp = before.content
             embed = Embed(description=f":page_facing_up: {after.author.mention} **ID (**{after.author.id}**)**",
@@ -123,8 +123,7 @@ class Log(Cog):
 
         for name, value, inline in fields:
             embed.add_field(name=name, value=value, inline=inline)
-
-        await self.log_channel.send(embed=embed)
+            await self.log_channel.send(embed=embed)
 
 
 def setup(bot):

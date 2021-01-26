@@ -5,10 +5,20 @@ import discord
 import asyncio
 import aiohttp
 
-from discord.ext.commands import Cog
+from datetime import datetime, timedelta
+from platform import python_version
+from time import time
+from psutil import Process, virtual_memory
+
+from apscheduler.triggers.cron import CronTrigger
+
+from discord import Activity, ActivityType, Embed
+from discord import __version__ as discord_version
+from discord.ext.commands import Cog, Greedy
 from discord.ext.commands import CheckFailure, BadArgument
 from discord.ext.commands import command, has_permissions
 from discord.ext import commands
+
 
 from ..db import db
 
@@ -45,15 +55,47 @@ class owner(Cog):
                 msg = ':x: Unable to find guild with matching ID!'
                 await ctx.send(msg)
 
-    # @commands.command(hidden=True)
-    # async def botstatus(self, ctx, gameType: str, *, gameName: str):
-    #    '''(BOT OWNER ONLY)'''
-    #    gameType = gameType.lower()
-    #    if gameType == 'guard':
-    #        await self.bot.change_presence(status=discord.Status.dnd, activity=discord.Game("with my source code"))
-    #        await ctx.send(f'**:ok:** test: {gameType} **{gameName}**')
+    @command(name="ping")
+    async def ping(self, ctx):
+        start = time()
+        message = await ctx.send(f"Pong!  Discord Latency: {self.bot.latency*1000:,.0f} ms.")
+        end = time()
+        await message.edit(content=f"Pong! Discord Latency: {self.bot.latency*1000:,.0f} ms. Response Achieved In: {(end-start)*1000:,.0f} ms.")
 
-    @ Cog.listener()
+    @command(name="stats")
+    async def show_bot_stats(self, ctx):
+        embed = Embed(title="Bot stats",
+                      colour=ctx.author.colour,
+                      thumbnail=self.bot.user.avatar_url,
+                      timestamp=datetime.utcnow())
+
+        proc = Process()
+        with proc.oneshot():
+            uptime = timedelta(seconds=time()-proc.create_time())
+            cpu_time = timedelta(
+                seconds=(cpu := proc.cpu_times()).system + cpu.user)
+            mem_total = virtual_memory().total / (1024**2)
+            mem_of_total = proc.memory_percent()
+            mem_usage = mem_total * (mem_of_total / 100)
+
+        fields = [
+            ("Bot version", self.bot.VERSION, True),
+            ("Python version", python_version(), True),
+            ("Discord.py version", discord_version, True),
+            ("Uptime", uptime, True),
+            ("CPU time", cpu_time, True),
+            ("Memory usage",
+             f"{mem_usage:,.3f} / {mem_total:,.0f} MiB ({mem_of_total:.0f}%)", True),
+            ("Users", f"{self.bot.guild.member_count:,}", True),
+            ("Developer", "TempusOwl#0001", False)
+        ]
+
+        for name, value, inline in fields:
+            embed.add_field(name=name, value=value, inline=inline)
+
+        await ctx.send(embed=embed)
+
+    @Cog.listener()
     async def on_ready(self):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("owner")

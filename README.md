@@ -9,6 +9,6 @@ Sqlite3 3.34.0
 AsyncIOScheduler 3.6.3
 ## Self Hosting & Derivatives Agreement
 - You may not use the Praetorian logo or name.
-- You may not host/advertise a public/modified version of Praetorian for use beyond your own server(s).
+- You may not host/advertise Praetorian for use beyond your own server(s).
 ## Other Project Infomation
 Check out Carberra, Corey Schafer and Sentdex for learning python if you are new <3

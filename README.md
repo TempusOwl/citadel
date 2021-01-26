@@ -11,7 +11,7 @@ discord-ext-menus (By Rapptz - Oct 26, 2020)
 
 ## Self Hosting & Derivatives Agreement
 - You may not use the Praetorian logo or name.  
-- You ask people not to use Praetorian beyond your own server(s).  
+- You may not use Praetorian beyond server(s) you moderate.  
 
 ## Other Project Infomation
 Check out Carberra, Corey Schafer and Sentdex for learning python if you are new <3

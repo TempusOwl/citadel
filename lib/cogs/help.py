@@ -7,6 +7,10 @@ from discord.ext.commands import Cog
 from discord.ext.commands import command
 
 
+def __init__(self, bot):
+    self.bot = bot
+
+
 def syntax(command):
     cmd_and_aliases = "|".join([str(command), *command.aliases])
     params = []

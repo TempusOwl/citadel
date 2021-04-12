@@ -2,7 +2,6 @@ import discord
 from asyncio import sleep
 from datetime import datetime
 from glob import glob
-from ..cogs.utils import checks, cache
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger

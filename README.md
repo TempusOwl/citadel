@@ -7,6 +7,7 @@ Python 3.9.1 (Confirmed)
 Discord.py 1.6.0
 Sqlite3 3.34.0
 AsyncIOScheduler 3.6.3
+psutil 5.8.0
 discord-ext-menus (By Rapptz - Oct 26, 2020)
 
 ## Self Hosting & Derivatives Agreement

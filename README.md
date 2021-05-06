@@ -1,7 +1,5 @@
 ## Praetorian
-Currently this bot is not open for public use, it is missing various features and is incredibly unstable. Project is on-going
-## Can I Run It anyway?
-You may run this bot at your own risk by running launcher.py after supplying the required token/config fields (assuming the below depends are met).
+Currently this bot is not open for public use, it is missing various features and is incredibly unstable. Project is on-going. You may run this bot at your own risk by running launcher.py after supplying the required token/config fields (assuming the below depends are met).
 ## Dependencies
   Python 3.9.1  
   Discord.py 1.7.2  

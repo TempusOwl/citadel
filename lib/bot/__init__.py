@@ -6,15 +6,25 @@ from glob import glob
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from discord import Embed, File, Intents
+from discord.errors import HTTPException, Forbidden
 from discord.ext.commands import Bot as BotBase
 from discord.ext.commands import Context
-from discord.ext.commands import CommandNotFound
+from discord.ext.commands import (
+    CommandNotFound, BadArgument, MissingRequiredArgument, CommandOnCooldown)
+
+from discord.ext.commands import when_mentioned_or, command, has_permissions
 
 from ..db import db
 
-PREFIX = "+"
 OWNER_IDS = [134118092082118657]
 COGS = [path.split("\\")[-1][:-3] for path in glob("./lib/cogs/*.py")]
+IGNORE_EXCEPTIONS = (CommandNotFound, BadArgument)
+
+
+def get_prefix(bot, message):
+    prefix = db.field(
+        "SELECT Prefix FROM guilds WHERE GuildID = ?", message.guild.id)
+    return when_mentioned_or(prefix)(bot, message)
 
 
 class Ready(object):
@@ -32,7 +42,6 @@ class Ready(object):
 
 class Bot(BotBase):
     def __init__(self):
-        self.PREFIX = PREFIX
         self.ready = False
         self.cogs_ready = Ready()
         self.guild = None
@@ -41,7 +50,7 @@ class Bot(BotBase):
         db.autosave(self.scheduler)
 
         super().__init__(
-            command_prefix=PREFIX,
+            command_prefix=get_prefix,
             owner_ids=OWNER_IDS,
             intents=Intents.all(),
         )
@@ -92,11 +101,22 @@ class Bot(BotBase):
         raise  # type: ignore
 
     async def on_command_error(self, ctx, exc):
-        if isinstance(exc, CommandNotFound):
+        if any([isinstance(exc, error) for error in IGNORE_EXCEPTIONS]):  # Hides any error
             pass
+        elif isinstance(exc, MissingRequiredArgument):
+            await ctx.send("One or more required arguments are missing.")
+
+        elif isinstance(exc, CommandOnCooldown):
+            await ctx.send(f"Command is on cooldown, try again in {exc.retry_after:,.2f} seconds ( {str(exc.cooldown.type).split('.')[-1]} cooldown )")
+
+        elif isinstance(exc, HTTPException):
+            await ctx.send("Unable to send message")
+
+        elif isinstance(exc.original, Forbidden):
+            await ctx.send("I do not have permission to do that.")
 
         else:
-            raise exc
+            raise exc  # Potential Multi Server Problem
 
     async def on_ready(self):
         if not self.ready:
@@ -112,7 +132,9 @@ class Bot(BotBase):
 
             await self.stdout.send("Now online!")
             self.ready = True
-            print(" bot ready")
+
+            await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Guard'))
+            print("bot ready")
 
         else:
             print("bot reconnected")

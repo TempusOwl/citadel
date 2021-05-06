@@ -2,6 +2,8 @@
 *.db
 *.db-journal
 __pycache__
+examples
+# Visual Studio Code
+.vscode
 #Protected - Do not move these files/folders below unless you know what you are doing. Doing so can leak your Token.
 lib/bot/token.0
-.vscode

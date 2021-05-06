@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from re import search
 from typing import Optional
 
-from better_profanity import profanity
 from discord import Embed, Member
 from discord.ext.commands import Cog, Greedy
 from discord.ext.commands import CheckFailure
@@ -12,7 +11,6 @@ from discord.ext import commands
 
 from ..db import db
 
-profanity.load_censor_words_from_file("./data/profanity.txt")
 
 
 class Mod(Cog):
@@ -286,9 +284,9 @@ class Mod(Cog):
                     await sleep(5)
                     await self.unmute_members(message.guild, [message.author])
 
-            elif profanity.contains_profanity(message.content):
-                await message.delete()
-                await message.channel.send("You can't use that word here.", delete_after=10)
+            #elif profanity.contains_profanity(message.content):
+            #    await message.delete()
+            #    await message.channel.send("You can't use that word here.", delete_after=10)
 
             # XX commented out so it doesn't interfere with the rest of the server while recording
             # elif message.channel.id not in self.links_allowed and search(self.url_regex, message.content):

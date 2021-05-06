@@ -64,7 +64,7 @@ class Mod(Cog):
         for target in targets:
             if (message.guild.me.top_role.position > target.top_role.position
                     and not target.guild_permissions.administrator):
-                await target.ban(reason=reason)
+                await target.guild.ban(reason=reason)
 
                 embed = Embed(title="Member banned",
                               colour=0xDD2222,
@@ -96,6 +96,12 @@ class Mod(Cog):
     async def ban_command_error(self, ctx, exc):
         if isinstance(exc, CheckFailure):
             await ctx.send("Insufficient permissions to perform that task.")
+
+    @commands.Cog.listener()
+    async def on_member_ban(self, guild, member):
+        print(type(member))
+        print("Is User?", isinstance(member, discord.User))
+        print("Is Member?", isinstance(member, discord.Member))
 
     @command(name="clear", aliases=["purge"])
     @bot_has_permissions(manage_messages=True)
@@ -233,12 +239,6 @@ class Mod(Cog):
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
     async def unban(self, ctx, user: int = None, *reason):
-        '''Entbannt ein Mitglied mit einer Begründung (MOD ONLY)
-        Es muss die Benutzer-ID angegeben werden, Name + Discriminator reicht nicht
-        Beispiel:
-        -----------
-        :unban 102815825781596160
-        '''
         user = discord.User(id=user)
         if user is not None:
             if reason:
@@ -247,22 +247,20 @@ class Mod(Cog):
                 reason = None
             await ctx.guild.unban(user, reason=reason)
         else:
-            await ctx.send('**:no_entry:** Kein Benutzer angegeben!')
+            await ctx.send('**:no_entry:** No user specified!')
 
     @commands.command(alias=['clearreactions'])
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def removereactions(self, ctx, messageid: str):
-        '''Entfernt alle Emoji Reactions von einer Nachricht (MOD ONLY)
-        Beispiel:
-        -----------
+        '''
         :removereactions 247386709505867776
         '''
         message = await ctx.channel.get_message(messageid)
         if message:
             await message.clear_reactions()
         else:
-            await ctx.send('**:x:** Konnte keine Nachricht mit dieser ID finden!')
+            await ctx.send('**:x:** Couldnt find a message with this ID!')
 
     @Cog.listener()
     async def on_ready(self):

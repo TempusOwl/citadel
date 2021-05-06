@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from re import search
 from typing import Optional
 
-from better_profanity import profanity
 from discord import Embed, Member
 from discord.ext.commands import Cog, Greedy
 from discord.ext.commands import CheckFailure
@@ -12,7 +11,6 @@ from discord.ext import commands
 
 from ..db import db
 
-profanity.load_censor_words_from_file("./data/profanity.txt")
 
 
 class Mod(Cog):

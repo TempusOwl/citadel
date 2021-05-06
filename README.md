@@ -10,5 +10,5 @@ Is Discord.com server bot with emphasis on server moderation and utility for mod
   APScheduler 3.7.0   
   discord-ext-menus 1.0.0a30+g309c702   
 ## Self Hosting & Derivatives Agreement
-- You may not use the Praetorian logo or name.
+- You may not use the Praetorian logo or name.  
 - You may not host a version of Praetorian for use beyond your own server(s). You may use my code freely in other projects.

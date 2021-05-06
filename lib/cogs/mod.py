@@ -284,9 +284,9 @@ class Mod(Cog):
                     await sleep(5)
                     await self.unmute_members(message.guild, [message.author])
 
-            elif profanity.contains_profanity(message.content):
-                await message.delete()
-                await message.channel.send("You can't use that word here.", delete_after=10)
+            #elif profanity.contains_profanity(message.content):
+            #    await message.delete()
+            #    await message.channel.send("You can't use that word here.", delete_after=10)
 
             # XX commented out so it doesn't interfere with the rest of the server while recording
             # elif message.channel.id not in self.links_allowed and search(self.url_regex, message.content):

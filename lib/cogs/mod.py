@@ -12,7 +12,6 @@ from discord.ext import commands
 from ..db import db
 
 
-
 class Mod(Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -284,7 +283,7 @@ class Mod(Cog):
                     await sleep(5)
                     await self.unmute_members(message.guild, [message.author])
 
-            #elif profanity.contains_profanity(message.content):
+            # elif profanity.contains_profanity(message.content):
             #    await message.delete()
             #    await message.channel.send("You can't use that word here.", delete_after=10)
 

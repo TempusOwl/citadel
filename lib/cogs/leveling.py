@@ -14,7 +14,6 @@ from ..db import db
 class Leveling(Cog):
     def __init__(self, bot):
         self.bot = bot
-        bot.multiplier = 1
 
     @command()
     async def on_message(self, message):
@@ -25,11 +24,12 @@ class Leveling(Cog):
                 cur = await db.field("SELECT exp FROM guildData WHERE guild_id = ? AND user_id = ?", (message.guild.id, message.author.id))
                 data = await cur.fetchone()
                 exp = data[0]
-                lvl = math.sqrt(exp) / bot.multiplier
+                multiplier = 1
+                lvl = math.sqrt(exp) / multiplier
                 if lvl.is_integer():
                     await message.channel.send(f"{message.author.mention} well done! You're now level: {int(lvl)}.")
-            await bot.db.commit()
-        await bot.process_commands(message)
+            await db.commit()
+            await self.bot.process_commands(self, message)
 
     @command()
     async def level(self, ctx, message, member: discord.Member = None):
@@ -44,9 +44,10 @@ class Leveling(Cog):
             async for value in cursor:
                 if exp < value[0]:
                     rank += 1
-        lvl = int(math.sqrt(exp)//bot.multiplier)
-        current_lvl_exp = (bot.multiplier*(lvl))**2
-        next_lvl_exp = (bot.multiplier*((lvl+1)))**2
+        multiplier = 1
+        lvl = int(math.sqrt(exp)//multiplier)
+        current_lvl_exp = (multiplier*(lvl))**2
+        next_lvl_exp = (multiplier*((lvl+1)))**2
         lvl_percentage = ((exp-current_lvl_exp) /
                           (next_lvl_exp-current_lvl_exp)) * 100
         embed = discord.Embed(
@@ -87,14 +88,14 @@ class Leveling(Cog):
                         embed.description += f"{index}) {member.mention} : {exp}\n"
                     await msg.edit(embed=embed)
             try:
-                reaction, user = await bot.wait_for("reaction_add", check=lambda reaction, user: user == ctx.author and reaction.emoji in buttons, timeout=60.0)
+                reaction, user = await wait_for("reaction_add", check=lambda reaction, user: user == ctx.author and reaction.emoji in buttons, timeout=60.0)
             except asyncio.TimeoutError:
                 return await msg.clear_reactions()
             else:
                 previous_page = current
                 await msg.remove_reaction(reaction.emoji, ctx.author)
                 current = buttons[reaction.emoji]
-                asyncio.run(bot.db.close())
+                asyncio.run(db.close())
 
     @Cog.listener()
     async def on_ready(self):

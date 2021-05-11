@@ -1,3 +1,8 @@
+import discord
+import yaml
+import os
+import sys
+
 from random import choice, randint
 from typing import Optional
 
@@ -6,6 +11,12 @@ from discord import Member, Embed
 from discord.ext.commands import Cog, BucketType
 from discord.ext.commands import BadArgument
 from discord.ext.commands import command, cooldown
+
+if not os.path.isfile("config.yaml"):
+    sys.exit("'config.yaml' not found! Please add it and try again.")
+else:
+    with open("config.yaml") as file:
+        config = yaml.load(file, Loader=yaml.FullLoader)
 
 
 class Fun(Cog):
@@ -71,6 +82,25 @@ class Fun(Cog):
                     await ctx.send(f"API returned a {response.status} status.")
         else:
             await ctx.send("No facts exist for that animal.")
+
+    @command(name="poll")
+    async def poll(self, context, *args):
+        """
+        Create a poll where members can vote.
+        """
+        poll_title = " ".join(args)
+        embed = discord.Embed(
+            title="A new poll has been created!",
+            description=f"{poll_title}",
+            color=config["success"]
+        )
+        embed.set_footer(
+            text=f"Poll created by: {context.message.author} • React to vote!"
+        )
+        embed_message = await context.send(embed=embed)
+        await embed_message.add_reaction("👍")
+        await embed_message.add_reaction("👎")
+        await embed_message.add_reaction("🤷")
 
     @Cog.listener()
     async def on_ready(self):
